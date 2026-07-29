@@ -14,8 +14,8 @@ export async function POST(req: Request) {
 
     const promptText = `Create a detailed ${tool || 'lesson plan'} for grade/level "${grade}" on the topic: "${topic}". Use clear Markdown formatting with headings and bullet points.`;
 
-    // Updated model name to gemini-2.5-flash
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    // Use gemini-2.0-flash or gemini-2.5-flash
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     const response = await model.generateContent(promptText);
     const text = response.response.text();
 
@@ -23,4 +23,4 @@ export async function POST(req: Request) {
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 });
   }
-                              }
+}
