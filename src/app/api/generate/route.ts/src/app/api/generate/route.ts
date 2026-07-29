@@ -1,7 +1,7 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 const PROMPTS = {
   lesson: (topic: string, grade: string) => `
@@ -35,14 +35,13 @@ export async function POST(req: Request) {
     }
 
     const promptText = PROMPTS[tool as keyof typeof PROMPTS](topic, grade);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: promptText,
-    });
+    const response = await model.generateContent(promptText);
+    const text = response.response.text();
 
-    return NextResponse.json({ result: response.text });
+    return NextResponse.json({ result: text });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 });
   }
-}
+  }
